@@ -6,7 +6,7 @@ label start:
     init python:
 
         RANDOM_COLOR = (234, 165, 43)
-        target_position = [(550, 95), (745, 145), (665, 195), (550, 245), (700, 295), (460, 345), (0, 0)]
+        target_position = [(520, 95), (715, 145), (635, 195), (520, 245), (670, 295), (430, 345), (0, 0)]
         target_position_available = [True, True, True, True, True, True, True, True]
 
 
@@ -44,7 +44,7 @@ label start:
             def __init__(self, text, position, size):
 
                 self._text = text
-                self._example_add_text = Text(text, color="#000080")
+                self._example_add_text = Text(text, color="#ffffff")
                 self._x = position[0]
                 self._y = position[1]
                 self._current_x = float(self._x)
@@ -109,16 +109,10 @@ label start:
                         self._stop = False
                         self._move()
                         return True
-                    #self._example_add_text = Text("Гав", (50, 500))
 
-
-                        # Needed to ensure that event is called, noticing
-                        # the winner.
-                    #renpy.timeout(0)
                 return False
 
             def _move(self):
-                #self._example_add_text = Text(self.get_text())
                 self._current_x += self._k_x
                 self._current_y += self._k_y
                 if abs(self._current_y - self._last_coordinates[1]) < self._speed:
@@ -153,17 +147,8 @@ label start:
                         self._stop = False
                         self._move()
                         return True
-                    #self._example_add_text = Text("Гав", (50, 500))
 
-
-                        # Needed to ensure that event is called, noticing
-                        # the winner.
-                    #renpy.timeout(0)
                 return False
-
-
-
-
 
 
 
@@ -175,17 +160,18 @@ label start:
 
                 renpy.Displayable.__init__(self)
 
-
                 self._prepare_game_over = False
                 self._game_result = 0
                 self._FPS = 60
                 self._clock = pygame.time.Clock()
                 self._exit_button = Button("Закончить", (1050, 630), (120, 30))
                 self._correct_answer = ["солнце", "прелестный", "проснись", "сомкнуты", "Авроры", "Звездою"]
-                self._text_color = "ff0000"
-
+                self._text_color = "#000080"
 
                 self._image = Image("tree.png")
+
+
+                self._text_image = Image("light_tree.png")
 
                 self._surf_text = [(Text("Мороз и _____________; день чудесный!", color=self._text_color), 100),
                              (Text("Еще ты дремлешь, друг _____________ —", color=self._text_color), 150),
@@ -200,29 +186,21 @@ label start:
                                           FlyTextButton("прелестный", (437, 630), (138, 25)),
                                           FlyTextButton("Звездою", (595, 630), (97, 25)),
                                           FlyTextButton("проснись", (712, 630), (110, 25))]
-
-                # If the ball is stuck to the paddle.
-
                 self.winner = None
 
 
-            # Recomputes the position of the ball, handles bounces, and
-            # draws the screen.
             def render(self, width, height, st, at):
-
-
-                # The Render object we'll be drawing into.
                 r = renpy.Render(width, height)
-
-
-                for value in self._surf_text:
-                    text = renpy.render(value[0], width, height, st, at)
-                    r.blit(text, (450, value[1]))
-
-
 
                 image = renpy.render(self._image, width, height, st, at)
                 r.blit(image, (0, 500))
+
+                image = renpy.render(self._text_image, width, height, st, at)
+                r.blit(image, (180, 0))
+
+                for value in self._surf_text:
+                    text = renpy.render(value[0], width, height, st, at)
+                    r.blit(text, (420, value[1]))
 
                 for value in self._example_add_text:
                     value.render(r, width, height, st, at)
@@ -230,18 +208,8 @@ label start:
                 if self._prepare_game_over:
                     self._exit_button.render(r, width, height, st, at)
 
-
-
                 self._clock.tick(self._FPS)
-
-                #example_add_text = renpy.render(self._example_add_text, width, height, st, at)
-                #r.blit(example_add_text, (50, 500))
-
-
-
                 renpy.redraw(self, 0)
-
-
 
                 return r
 
@@ -251,9 +219,6 @@ label start:
                     if target_position[i] == end_position:
                         target_position_available[i] = True
                         return i
-
-
-
 
 
             def _get_position_available(self):
@@ -266,8 +231,6 @@ label start:
 
                 import pygame
 
-                # Mousebutton down == start the game by setting stuck to
-                # false.
                 exit_game = False
                 if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                     position_available = self._get_position_available()
@@ -292,7 +255,6 @@ label start:
                                 break
                     if not is_used:
                         self._put_end_position(position)
-                    # Ensure the pong screen updates.
                     self._prepare_game_over = target_position[self._get_position_available()] == (0, 0)
                     if self._prepare_game_over:
                         if self._exit_button.event(x, y):
@@ -309,7 +271,7 @@ label start:
 
         default pong = GameDisplayable()
 
-        add "game_photo1"
+        add "background"
 
         add pong
 
@@ -318,7 +280,7 @@ label start:
 
     label play_pong:
 
-        window hide  # Hide the window and  quick menu while in pong
+        window hide
         $ quick_menu = False
 
         call screen pong
