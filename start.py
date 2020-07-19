@@ -5,10 +5,6 @@ label start:
 
     init python:
 
-        RANDOM_COLOR = (234, 165, 43)
-
-
-
 
         class Button():
 
