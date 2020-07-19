@@ -289,31 +289,5 @@ label start:
     show eileen vhappy
 
 
-    if _return == 6:
-
-        "we4ftihu" "верно 6"
-
-    elif _return == 5:
-
-        "ouewGF" "верно 5"
-    elif _return == 4:
-
-        "ouewGF" "верно 4"
-
-    elif _return == 3:
-
-        "ouewGF" "верно 3"
-
-    elif _return == 2:
-
-        "ouewGF" "верно 2"
-    elif _return == 1:
-
-        "ouewGF" "верно 1"
-
-    elif _return == 0:
-
-        "ouewGF" "верно 0"
-    else:
-        "weiygfg" "верно > 6"
+    "we4ftihu" "верно [_return]"
 
