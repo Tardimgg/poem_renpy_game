@@ -271,7 +271,7 @@ label start:
 
         add "background"
 
-        add word_pong
+        add word_game
 
 
 
