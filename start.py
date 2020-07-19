@@ -265,13 +265,13 @@ label start:
                 else:
                     raise renpy.IgnoreEvent()
 
-    screen pong():
+    screen game():
 
-        default pong = GameDisplayable()
+        default word_game = GameDisplayable()
 
         add "background"
 
-        add pong
+        add word_pong
 
 
 
@@ -281,7 +281,7 @@ label start:
         window hide
         $ quick_menu = False
 
-        call screen pong
+        call screen game
 
         $ quick_menu = True
         window show
