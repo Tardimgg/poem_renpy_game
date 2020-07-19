@@ -6,8 +6,7 @@ label start:
     init python:
 
         RANDOM_COLOR = (234, 165, 43)
-        target_position = [(520, 95), (715, 145), (635, 195), (520, 245), (670, 295), (430, 345), (0, 0)]
-        target_position_available = [True, True, True, True, True, True, True, True]
+
 
 
 
@@ -160,6 +159,9 @@ label start:
 
                 renpy.Displayable.__init__(self)
 
+                self._target_position = [(520, 95), (715, 145), (635, 195), (520, 245), (670, 295), (430, 345), (0, 0)]
+                self._target_position_available = [True, True, True, True, True, True, True, True]
+
                 self._prepare_game_over = False
                 self._game_result = 0
                 self._FPS = 60
@@ -215,15 +217,15 @@ label start:
 
 
             def _put_end_position(self, end_position):
-                for i in range(len(target_position)):
-                    if target_position[i] == end_position:
-                        target_position_available[i] = True
+                for i in range(len(self._target_position)):
+                    if self._target_position[i] == end_position:
+                        self._target_position_available[i] = True
                         return i
 
 
             def _get_position_available(self):
-                for i in range(len(target_position_available)):
-                    if target_position_available[i]:
+                for i in range(len(self._target_position_available)):
+                    if self._target_position_available[i]:
                         return i
 
             # Handles events.
@@ -234,8 +236,8 @@ label start:
                 exit_game = False
                 if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                     position_available = self._get_position_available()
-                    position = target_position[position_available]
-                    target_position_available[position_available] = False
+                    position = self._target_position[position_available]
+                    self._target_position_available[position_available] = False
                     is_used = False
                     for value in self._example_add_text:
                         if value.is_in_start():
@@ -255,7 +257,7 @@ label start:
                                 break
                     if not is_used:
                         self._put_end_position(position)
-                    self._prepare_game_over = target_position[self._get_position_available()] == (0, 0)
+                    self._prepare_game_over = self._target_position[self._get_position_available()] == (0, 0)
                     if self._prepare_game_over:
                         if self._exit_button.event(x, y):
                             exit_game = True
