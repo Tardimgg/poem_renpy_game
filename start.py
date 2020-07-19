@@ -110,7 +110,7 @@ label start:
             def _move(self):
                 self._current_x += self._k_x
                 self._current_y += self._k_y
-                if abs(self._current_y - self._last_coordinates[1]) < self._speed:
+                if abs(self._current_y - self._last_coordinates[1]) < self._speed and abs(self._current_x - self._last_coordinates[0]) < self._speed:
                     self._stop = True
 
 
@@ -276,7 +276,7 @@ label start:
 
 
 
-    label play_pong:
+    label play_game:
 
         window hide
         $ quick_menu = False
