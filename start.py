@@ -8,17 +8,18 @@ label start:
 
         class Button():
 
-            def __init__(self, text, position, size):
+            def __init__(self, text, position):
 
                 self._text = text
                 self._root_text = Text(text, color="#9cee90")
                 self._x = position[0]
                 self._y = position[1]
-                self._size = size
+                self._size = (0, 0)
 
 
             def render(self, r, width, height, st, at):
                 button = renpy.render(self._root_text, width, height, st, at)
+                self._size = button.get_size()
                 r.blit(button, (self._x, self._y))
 
 
@@ -36,7 +37,7 @@ label start:
 
         class FlyTextButton():
 
-            def __init__(self, text, position, size):
+            def __init__(self, text, position):
 
                 self._text = text
                 self._example_add_text = Text(text, color="#ffffff")
@@ -46,7 +47,7 @@ label start:
                 self._current_y = float(self._y)
                 self._k_x = 1.0
                 self._k_y = 1.0
-                self._size = size
+                self._size = (0, 0)
                 self._speed = 5
                 self._stop = True
                 self._last_coordinates = None
@@ -57,6 +58,7 @@ label start:
                 if (not self._stop):
                     self._move()
                 text = renpy.render(self._example_add_text, width, height, st, at)
+                self._size = text.get_size()
                 r.blit(text, (self._current_x, self._current_y))
 
             def get_text(self):
@@ -162,7 +164,7 @@ label start:
                 self._game_result = 0
                 self._FPS = 60
                 self._clock = pygame.time.Clock()
-                self._exit_button = Button("Закончить", (1050, 630), (120, 30))
+                self._exit_button = Button("Закончить", (1050, 630))
                 self._correct_answer = ["солнце", "прелестный", "проснись", "сомкнуты", "Авроры", "Звездою"]
                 self._text_color = "#000080"
 
@@ -178,12 +180,12 @@ label start:
                              (Text("Навстречу северной ______________,", color=self._text_color), 300),
                              (Text("_____________ севера явись!", color=self._text_color), 350)]
 
-                self._example_add_text = [FlyTextButton("солнце", (100, 630), (80, 25)),
-                                          FlyTextButton("сомкнуты", (200, 630), (112, 25)),
-                                          FlyTextButton("Авроры", (332, 630), (85, 25)),
-                                          FlyTextButton("прелестный", (437, 630), (138, 25)),
-                                          FlyTextButton("Звездою", (595, 630), (97, 25)),
-                                          FlyTextButton("проснись", (712, 630), (110, 25))]
+                self._example_add_text = [FlyTextButton("солнце", (100, 630)),
+                                          FlyTextButton("сомкнуты", (200, 630)),
+                                          FlyTextButton("Авроры", (332, 630)),
+                                          FlyTextButton("прелестный", (437, 630)),
+                                          FlyTextButton("Звездою", (595, 630)),
+                                          FlyTextButton("проснись", (712, 630))]
                 self.winner = None
 
 
