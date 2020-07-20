@@ -6,45 +6,51 @@ label start:
     init python:
 
 
-        class Button():
+        class View():
+            def __init__(self, position, displayable):
+                self._x = position[0]
+                self._y = position[1]
+                self._displayable = displayable
+                self._size = (0, 0)
+
+
+            def render(self, r, width, height, st, at):
+                render_view = renpy.render(self._displayable, width, height, st, at)
+                self._size = render_view.get_size()
+                r.blit(render_view, (self._x, self._y))
+
+
+            def event(self, x, y):
+                return (self._x + self._size[0]) > x > self._x and (self._y + self._size[1]) > y > self._y
+
+            def set_position(self, position):
+                self._x, self._y = position[0], position[1]
+
+
+
+        class Button(View):
 
             def __init__(self, text, position):
-
-                self._text = text
                 self._root_text = Text(text, color="#9cee90")
+                super(Button, self).__init__(position, self._root_text)
                 self._x = position[0]
                 self._y = position[1]
                 self._size = (0, 0)
 
 
-            def render(self, r, width, height, st, at):
-                button = renpy.render(self._root_text, width, height, st, at)
-                self._size = button.get_size()
-                r.blit(button, (self._x, self._y))
 
 
-            def _is_hit_by_coordinates(self, x, y):
-                if (self._x + self._size[0]) > x > self._x and (self._y + self._size[1]) > y > self._y:
-                    return True
-                return False
-
-            def event(self, x, y):
-                return self._is_hit_by_coordinates(x, y)
-
-
-
-
-
-        class FlyTextButton():
+        class FlyTextButton(View):
 
             def __init__(self, text, position):
 
                 self._text = text
                 self._example_add_text = Text(text, color="#ffffff")
-                self._x = position[0]
-                self._y = position[1]
-                self._current_x = float(self._x)
-                self._current_y = float(self._y)
+                self._start_x = float(position[0])
+                self._start_y = float(position[1])
+                self._current_x = float(self._start_x)
+                self._current_y = float(self._start_y)
+                super(FlyTextButton, self).__init__((self._current_x, self._current_y), self._example_add_text)
                 self._k_x = 1.0
                 self._k_y = 1.0
                 self._size = (0, 0)
@@ -57,9 +63,8 @@ label start:
             def render(self, r, width, height, st, at):
                 if (not self._stop):
                     self._move()
-                text = renpy.render(self._example_add_text, width, height, st, at)
-                self._size = text.get_size()
-                r.blit(text, (self._current_x, self._current_y))
+                super(FlyTextButton, self).render(r, width, height, st, at)
+
 
             def get_text(self):
                 return self._text
@@ -68,63 +73,28 @@ label start:
                 return self._end_position
 
             def is_in_start(self):
-                return abs(self._current_y - self._y) < self._speed
+                return abs(self._current_y - self._start_y) < self._speed
 
             def is_in_end(self):
                 return self._stop and not self.is_in_start()
 
-            def _is_hit_by_coordinates(self, x, y):
-                if (self._current_x + self._size[0]) > x > self._current_x and (self._current_y + self._size[1]) > y > self._current_y:
-                    return True
-                return False
-
-
-
-            def event(self, x, y, last_coordinates):
-                if last_coordinates != None:
-                    self._end_position = last_coordinates
-                if (self._stop):
-                    if last_coordinates == None:
-                        last_coordinates = (self._x, self._y)
-                    if self._is_hit_by_coordinates(x, y):
-                        self._last_coordinates = last_coordinates
-                        delta_x = abs(self._current_x - self._last_coordinates[0])
-                        delta_y = abs(self._current_y - self._last_coordinates[1])
-                        if delta_x > delta_y:
-                            self._k_x = 1
-                            self._k_y = float(abs(self._current_y - self._last_coordinates[1])) / abs(self._current_x - self._last_coordinates[0])
-                        elif delta_x < delta_y:
-                            self._k_x = float(abs(self._current_x - self._last_coordinates[0])) / abs(self._current_y - self._last_coordinates[1])
-                            self._k_y = 1
-                        else:
-                            self._k_x = 1
-                            self._k_y = 1
-                        self._k_x *= 1 if self._current_x < self._last_coordinates[0] else -1
-                        self._k_y *= 1 if self._current_y < self._last_coordinates[1] else -1
-                        self._k_x *= self._speed
-                        self._k_y *= self._speed
-                        self._stop = False
-                        self._move()
-                        return True
-
-                return False
 
             def _move(self):
                 self._current_x += self._k_x
                 self._current_y += self._k_y
+                super(FlyTextButton, self).set_position((self._current_x, self._current_y))
                 if abs(self._current_y - self._last_coordinates[1]) < self._speed and abs(self._current_x - self._last_coordinates[0]) < self._speed:
                     self._stop = True
 
 
 
-
             def event(self, x, y, last_coordinates):
                 if last_coordinates != None:
                     self._end_position = last_coordinates
                 if (self._stop):
                     if last_coordinates == None:
-                        last_coordinates = (self._x, self._y)
-                    if self._is_hit_by_coordinates(x, y):
+                        last_coordinates = (self._start_x, self._start_y)
+                    if super(FlyTextButton, self).event(x, y):
                         self._last_coordinates = last_coordinates
                         delta_x = abs(self._current_x - self._last_coordinates[0])
                         delta_y = abs(self._current_y - self._last_coordinates[1])
